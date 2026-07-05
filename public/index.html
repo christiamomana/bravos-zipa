@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bravos de Zipaquirá ⚾</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lobster&family=Anton&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --negro: #121212;
+    --negro2: #1c1c1e;
+    --dorado: #d9a419;
+    --dorado-claro: #f0c651;
+    --gris: #b9b9bd;
+    --gris-claro: #e8e8ea;
+    --verde: #3fa25c;
+    --rojo: #d9534f;
+    --card: #202024;
+    --borde: #33333a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--negro);
+    color: var(--gris-claro);
+    min-height: 100vh;
+  }
+  header {
+    background: linear-gradient(180deg, #000 0%, var(--negro2) 100%);
+    border-bottom: 2px solid var(--dorado);
+    padding: 18px 16px 0;
+    text-align: center;
+    position: sticky; top: 0; z-index: 50;
+  }
+  header h1 {
+    font-family: 'Lobster', cursive;
+    font-style: normal;
+    font-size: 2.4rem;
+    color: var(--dorado-claro);
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 0 3px 6px rgba(0,0,0,.5);
+  }
+  header h1 small {
+    display:block; font-family: 'Anton', sans-serif; font-size: .95rem; color: var(--gris-claro);
+    letter-spacing: 5px; font-style: normal; text-transform: uppercase; margin-top: 4px;
+  }
+
+  /* ---- Slider logo / uniforme ---- */
+  .slider {
+    position: relative; max-width: 380px; margin: 16px auto 0; border-radius: 16px;
+    overflow: hidden; border: 2px solid var(--dorado); background: #000;
+    aspect-ratio: 16/10;
+  }
+  .slider .track { display: flex; height: 100%; transition: transform .45s ease; }
+  .slider .slide {
+    min-width: 100%; height: 100%; position: relative; display: flex; align-items: center; justify-content: center;
+    background: #e9e6df;
+  }
+  .slider .slide img { width: 100%; height: 100%; object-fit: contain; }
+  .slider .slide .cap {
+    position: absolute; left: 0; right: 0; bottom: 0; padding: 6px 10px 5px;
+    font-family: 'Anton', sans-serif; font-size: .72rem; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--dorado-claro); background: linear-gradient(0deg, rgba(0,0,0,.85), rgba(0,0,0,0));
+    text-align: left;
+  }
+  .slider .flecha {
+    position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,.55);
+    color: var(--dorado-claro); border: 1px solid var(--dorado); border-radius: 50%;
+    width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 1rem; user-select: none; z-index: 2;
+  }
+  .slider .flecha.prev { left: 8px; }
+  .slider .flecha.next { right: 8px; }
+  .slider .puntos { position: absolute; bottom: 6px; right: 10px; display: flex; gap: 6px; z-index: 2; }
+  .slider .punto { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,.4); cursor: pointer; }
+  .slider .punto.activo { background: var(--dorado); }
+
+  nav { display: flex; justify-content: center; gap: 4px; margin-top: 12px; flex-wrap: wrap; }
+  nav button {
+    background: none; border: none; color: var(--gris);
+    padding: 10px 18px; font-size: .95rem; cursor: pointer;
+    border-bottom: 3px solid transparent; font-weight: 600;
+  }
+  nav button.activo { color: var(--dorado); border-bottom-color: var(--dorado); }
+  main { max-width: 1000px; margin: 0 auto; padding: 20px 14px 60px; }
+  .oculto { display: none !important; }
+  h2 { font-family: 'Anton', sans-serif; font-weight: 400; color: var(--dorado); font-size: 1.3rem; letter-spacing: .5px; margin-bottom: 14px; }
+  .sub { color: var(--gris); font-size: .85rem; margin-bottom: 16px; }
+
+  /* ---- Cards de jugadores ---- */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; }
+  .card {
+    background: var(--card); border: 1px solid var(--borde); border-radius: 14px;
+    padding: 16px; text-align: center; position: relative;
+  }
+  .card .rol {
+    position: absolute; top: 10px; right: 10px; font-size: .62rem; font-weight: 700;
+    padding: 3px 8px; border-radius: 10px; letter-spacing: 1px;
+    background: var(--dorado); color: #000;
+  }
+  .foto {
+    width: 84px; height: 84px; border-radius: 50%; margin: 4px auto 10px;
+    border: 3px solid var(--dorado); object-fit: cover; display: block;
+    background: #2c2c30; cursor: pointer;
+  }
+  .foto-placeholder {
+    width: 84px; height: 84px; border-radius: 50%; margin: 4px auto 10px;
+    border: 3px dashed #555; display: flex; align-items: center; justify-content: center;
+    color: #666; font-size: 1.6rem; cursor: pointer; background: #2c2c30;
+  }
+  .card h3 { font-size: 1rem; color: #fff; margin-bottom: 2px; }
+  .card .hint { font-size: .7rem; color: #777; margin-bottom: 10px; }
+  .card select {
+    width: 100%; margin-top: 6px; background: var(--negro2); color: var(--gris-claro);
+    border: 1px solid var(--borde); border-radius: 8px; padding: 7px 8px; font-size: .85rem;
+  }
+  .card label { font-size: .68rem; color: var(--gris); display: block; text-align: left; margin-top: 8px; letter-spacing: .5px; }
+
+  /* ---- Campo ---- */
+  .campo-wrap { position: relative; width: 100%; max-width: 720px; margin: 0 auto; aspect-ratio: 600/540; }
+  .campo-wrap svg { width: 100%; height: 100%; display: block; }
+  .slot {
+    position: absolute; transform: translate(-50%, -50%);
+    display: flex; flex-direction: column; align-items: center; cursor: pointer; width: 76px;
+  }
+  .slot .mini {
+    width: 52px; height: 52px; border-radius: 50%; border: 2.5px solid var(--dorado);
+    object-fit: cover; background: #1a1a1a; box-shadow: 0 2px 8px rgba(0,0,0,.6);
+  }
+  .slot .mini.vacio {
+    display:flex; align-items:center; justify-content:center;
+    border-style: dashed; border-color: #888; color: #999; font-size: .75rem; font-weight: 700;
+  }
+  .slot .etq {
+    margin-top: 3px; font-size: .62rem; font-weight: 700; color: #fff;
+    background: rgba(0,0,0,.75); padding: 2px 7px; border-radius: 8px;
+    max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .slot .pos-tag { color: var(--dorado-claro); }
+  .banca { margin-top: 18px; }
+  .banca .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    display: flex; align-items: center; gap: 8px; background: var(--card);
+    border: 1px solid var(--borde); border-radius: 20px; padding: 5px 12px 5px 5px; font-size: .82rem;
+  }
+  .chip img, .chip .mini-ph {
+    width: 30px; height: 30px; border-radius: 50%; object-fit: cover;
+    background:#2c2c30; display:flex; align-items:center; justify-content:center; color:#666; font-size:.8rem;
+  }
+
+  /* ---- Lineup ---- */
+  .lineup-lista { display: flex; flex-direction: column; gap: 8px; max-width: 560px; }
+  .turno {
+    display: flex; align-items: center; gap: 12px; background: var(--card);
+    border: 1px solid var(--borde); border-radius: 12px; padding: 8px 14px;
+  }
+  .turno .num {
+    width: 34px; height: 34px; border-radius: 50%; background: var(--dorado); color: #000;
+    display: flex; align-items: center; justify-content: center; font-family: 'Anton', sans-serif; font-weight: 400; flex-shrink: 0;
+  }
+  .turno select { flex: 1; background: var(--negro2); color: var(--gris-claro); border: 1px solid var(--borde); border-radius: 8px; padding: 8px; }
+
+  /* ---- Pagos ---- */
+  .resumen { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+  .stat { background: var(--card); border: 1px solid var(--borde); border-radius: 12px; padding: 12px 18px; flex:1; min-width: 140px; text-align:center; }
+  .stat .v { font-size: 1.3rem; font-weight: 800; color: var(--dorado); }
+  .stat .l { font-size: .7rem; color: var(--gris); letter-spacing: 1px; text-transform: uppercase; }
+  table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+  th, td { padding: 10px 8px; text-align: left; border-bottom: 1px solid var(--borde); }
+  th { color: var(--dorado); font-size: .72rem; text-transform: uppercase; letter-spacing: 1px; }
+  .barra { background: #333; border-radius: 6px; height: 8px; width: 100%; max-width: 130px; overflow: hidden; }
+  .barra > div { height: 100%; background: linear-gradient(90deg, var(--dorado), var(--dorado-claro)); }
+  .badge { font-size: .68rem; font-weight: 700; padding: 3px 10px; border-radius: 10px; white-space: nowrap; }
+  .badge.pagado { background: var(--verde); color: #fff; }
+  .badge.parcial { background: var(--dorado); color: #000; }
+  .badge.pendiente { background: #444; color: var(--gris); }
+  .btn {
+    background: var(--dorado); color: #000; border: none; border-radius: 10px;
+    padding: 10px 18px; font-weight: 700; cursor: pointer; font-size: .9rem;
+  }
+  .btn.sec { background: var(--negro2); color: var(--dorado); border: 1px solid var(--dorado); }
+  .btn.peligro { background: none; color: var(--rojo); border: none; font-size: 1rem; padding: 2px 6px; }
+  .admin-bar { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+  .admin-bar input, .form-abono input, .form-abono select {
+    background: var(--negro2); color: var(--gris-claro); border: 1px solid var(--borde);
+    border-radius: 8px; padding: 9px 10px; font-size: .9rem;
+  }
+  .form-abono { display: flex; gap: 8px; flex-wrap: wrap; background: var(--card); border: 1px solid var(--dorado); border-radius: 12px; padding: 14px; margin-bottom: 18px; }
+  .historial { margin-top: 24px; }
+  .toast {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: var(--dorado); color: #000; font-weight: 700; padding: 10px 22px;
+    border-radius: 24px; box-shadow: 0 4px 16px rgba(0,0,0,.5); z-index: 99;
+    opacity: 0; transition: opacity .3s; pointer-events: none;
+  }
+  .toast.ver { opacity: 1; }
+  @media (max-width: 520px) {
+    .grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+    .slot { width: 60px; }
+    .slot .mini { width: 40px; height: 40px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Bravos <small>de Zipaquirá</small></h1>
+
+  <div class="slider" id="slider-uniforme">
+    <div class="track" id="slider-track">
+      <div class="slide"><img src="logo-bravos.jpg" alt="Logo Bravos de Zipaquirá"><span class="cap">Logo oficial</span></div>
+      <div class="slide"><img src="uniforme-bravos.jpg" alt="Uniforme Bravos de Zipaquirá"><span class="cap">Uniforme oficial</span></div>
+    </div>
+    <div class="flecha prev" id="slider-prev">‹</div>
+    <div class="flecha next" id="slider-next">›</div>
+    <div class="puntos" id="slider-puntos"></div>
+  </div>
+
+  <nav>
+    <button data-tab="equipo" class="activo">⚾ Equipo</button>
+    <button data-tab="campo">🏟️ Campo</button>
+    <button data-tab="lineup">📋 Lineup</button>
+    <button data-tab="pagos">💰 Uniformes</button>
+  </nav>
+</header>
+
+<main>
+  <!-- EQUIPO -->
+  <section id="tab-equipo">
+    <h2>Roster del equipo</h2>
+    <p class="sub">Toca la foto para subir o cambiar la imagen de cada jugador. Asigna posición defensiva y turno al bate.</p>
+    <div class="grid" id="grid-jugadores"></div>
+  </section>
+
+  <!-- CAMPO -->
+  <section id="tab-campo" class="oculto">
+    <h2>Alineación defensiva</h2>
+    <p class="sub">Toca una posición del campo para asignar quién la cubre.</p>
+    <div class="campo-wrap" id="campo-wrap">
+      <svg viewBox="0 0 600 540" xmlns="http://www.w3.org/2000/svg">
+        <rect width="600" height="540" rx="14" fill="#0e2a12"/>
+        <!-- pasto exterior -->
+        <path d="M300 505 L40 245 A 370 370 0 0 1 560 245 Z" fill="#1c5426"/>
+        <!-- tierra del infield -->
+        <path d="M300 505 L155 360 A 205 205 0 0 1 445 360 Z" fill="#8a5a2b"/>
+        <!-- diamante de pasto interior -->
+        <polygon points="300,470 195,365 300,260 405,365" fill="#2a7a38"/>
+        <!-- líneas de foul -->
+        <line x1="300" y1="505" x2="40" y2="245" stroke="#f5f5f5" stroke-width="3"/>
+        <line x1="300" y1="505" x2="560" y2="245" stroke="#f5f5f5" stroke-width="3"/>
+        <!-- montículo -->
+        <circle cx="300" cy="365" r="22" fill="#8a5a2b" stroke="#6e4522" stroke-width="2"/>
+        <!-- bases -->
+        <rect x="292" y="497" width="16" height="16" fill="#fff" transform="rotate(45 300 505)"/>
+        <rect x="397" y="357" width="16" height="16" fill="#fff" transform="rotate(45 405 365)"/>
+        <rect x="292" y="252" width="16" height="16" fill="#fff" transform="rotate(45 300 260)"/>
+        <rect x="187" y="357" width="16" height="16" fill="#fff" transform="rotate(45 195 365)"/>
+        <!-- warning track -->
+        <path d="M40 245 A 370 370 0 0 1 560 245" fill="none" stroke="#8a5a2b" stroke-width="14"/>
+      </svg>
+      <!-- slots se insertan por JS -->
+    </div>
+    <div class="banca">
+      <h2>Banca / Sin posición</h2>
+      <div class="chips" id="chips-banca"></div>
+    </div>
+  </section>
+
+  <!-- LINEUP -->
+  <section id="tab-lineup" class="oculto">
+    <h2>Lineup de bateo</h2>
+    <p class="sub">Define el orden al bate. Cada turno solo puede tener un jugador.</p>
+    <div class="lineup-lista" id="lineup-lista"></div>
+  </section>
+
+  <!-- PAGOS -->
+  <section id="tab-pagos" class="oculto">
+    <h2>Pago de uniformes — $120.000 c/u</h2>
+    <div class="admin-bar" id="admin-bar">
+      <input type="password" id="pin-input" placeholder="PIN de administrador">
+      <button class="btn" id="btn-login">Entrar como admin</button>
+      <span id="admin-estado" class="sub" style="margin:0"></span>
+    </div>
+    <div class="form-abono oculto" id="form-abono">
+      <select id="abono-jugador"></select>
+      <input type="number" id="abono-monto" placeholder="Monto abonado ($)" min="1" step="1000">
+      <input type="text" id="abono-nota" placeholder="Nota (opcional)">
+      <button class="btn" id="btn-abonar">Registrar abono</button>
+    </div>
+    <div class="resumen" id="resumen-pagos"></div>
+    <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th>Jugador</th><th>Abonado</th><th>Falta</th><th>Progreso</th><th>Estado</th></tr></thead>
+        <tbody id="tabla-pagos"></tbody>
+      </table>
+    </div>
+    <div class="historial">
+      <h2>Historial de abonos</h2>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>Fecha</th><th>Jugador</th><th>Monto</th><th>Nota</th><th></th></tr></thead>
+          <tbody id="tabla-historial"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="toast" id="toast"></div>
+<input type="file" id="file-input" accept="image/*" style="display:none">
+
+<script src="firebase-config.js"></script>
+<script>
+const POSICIONES = {
+  P:  { nombre: 'Pitcher',        x: 50,   y: 66 },
+  C:  { nombre: 'Catcher',        x: 50,   y: 96 },
+  '1B': { nombre: 'Primera base', x: 72,   y: 62 },
+  '2B': { nombre: 'Segunda base', x: 59,   y: 46 },
+  '3B': { nombre: 'Tercera base', x: 28,   y: 62 },
+  SS: { nombre: 'Shortstop',      x: 41,   y: 46 },
+  LF: { nombre: 'Left field',     x: 20,   y: 27 },
+  CF: { nombre: 'Center field',   x: 50,   y: 14 },
+  RF: { nombre: 'Right field',    x: 80,   y: 27 }
+};
+const EXTRA_POS = { DH: 'Bateador designado', BE: 'Banca' };
+const PRECIO = 120000;
+const ROLES = { CAPITAN: 'CAPITÁN', MANAGER: 'MÁNAGER' };
+
+let jugadores = [];
+let adminPin = sessionStorage.getItem('adminPin') || null;
+let fotoJugadorId = null;
+
+const $ = s => document.querySelector(s);
+const fmt = n => '$' + Number(n).toLocaleString('es-CO');
+const toast = msg => {
+  const t = $('#toast'); t.textContent = msg; t.classList.add('ver');
+  setTimeout(() => t.classList.remove('ver'), 2200);
+};
+
+// ---------- Firebase (opcional) ----------
+let fbStorage = null;
+async function initFirebase() {
+  if (!window.FIREBASE_CONFIG || !window.FIREBASE_CONFIG.apiKey) return;
+  const load = src => new Promise((ok, err) => {
+    const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = err;
+    document.head.appendChild(s);
+  });
+  try {
+    await load('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js');
+    await load('https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js');
+    firebase.initializeApp(window.FIREBASE_CONFIG);
+    fbStorage = firebase.storage();
+    console.log('✅ Firebase Storage activo para fotos');
+  } catch (e) { console.warn('Firebase no disponible, se usará almacenamiento local', e); }
+}
+
+// ---------- API ----------
+const api = async (url, opts = {}) => {
+  opts.headers = Object.assign({ 'Content-Type': 'application/json' }, opts.headers || {});
+  if (adminPin) opts.headers['x-admin-pin'] = adminPin;
+  const r = await fetch(url, opts);
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(data.error || 'Error de servidor');
+  return data;
+};
+const cargarJugadores = async () => { jugadores = await api('/api/players'); };
+
+// ---------- Slider logo / uniforme ----------
+(function initSlider() {
+  const track = $('#slider-track');
+  const slides = track ? track.querySelectorAll('.slide') : [];
+  const puntosCont = $('#slider-puntos');
+  if (!track || !slides.length) return;
+  let idx = 0;
+  slides.forEach((_, i) => {
+    const p = document.createElement('div');
+    p.className = 'punto' + (i === 0 ? ' activo' : '');
+    p.onclick = () => ir(i);
+    puntosCont.appendChild(p);
+  });
+  function render() {
+    track.style.transform = `translateX(-${idx * 100}%)`;
+    puntosCont.querySelectorAll('.punto').forEach((p, i) => p.classList.toggle('activo', i === idx));
+  }
+  function ir(i) { idx = (i + slides.length) % slides.length; render(); }
+  $('#slider-prev').onclick = () => ir(idx - 1);
+  $('#slider-next').onclick = () => ir(idx + 1);
+  let auto = setInterval(() => ir(idx + 1), 4500);
+  $('#slider-uniforme').addEventListener('mouseenter', () => clearInterval(auto));
+  $('#slider-uniforme').addEventListener('mouseleave', () => auto = setInterval(() => ir(idx + 1), 4500));
+})();
+
+// ---------- Tabs ----------
+document.querySelectorAll('nav button').forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll('nav button').forEach(x => x.classList.remove('activo'));
+    b.classList.add('activo');
+    document.querySelectorAll('main > section').forEach(s => s.classList.add('oculto'));
+    $('#tab-' + b.dataset.tab).classList.remove('oculto');
+  };
+});
+
+// ---------- Render: Equipo ----------
+function renderEquipo() {
+  const grid = $('#grid-jugadores');
+  grid.innerHTML = '';
+  for (const j of jugadores) {
+    const card = document.createElement('div');
+    card.className = 'card';
+    const posOpts = ['<option value="">— Posición —</option>']
+      .concat(Object.entries(POSICIONES).map(([k, v]) =>
+        `<option value="${k}" ${j.posicion === k ? 'selected' : ''}>${k} · ${v.nombre}</option>`))
+      .concat(Object.entries(EXTRA_POS).map(([k, v]) =>
+        `<option value="${k}" ${j.posicion === k ? 'selected' : ''}>${v}</option>`)).join('');
+    const batOpts = ['<option value="">— Turno —</option>']
+      .concat(Array.from({ length: 15 }, (_, i) =>
+        `<option value="${i + 1}" ${j.orden_bateo === i + 1 ? 'selected' : ''}>Turno ${i + 1}</option>`)).join('');
+    card.innerHTML = `
+      ${ROLES[j.rol] ? `<span class="rol">${ROLES[j.rol]}</span>` : ''}
+      ${j.foto_url
+        ? `<img class="foto" src="${j.foto_url}" alt="${j.nombre}" data-foto="${j.id}">`
+        : `<div class="foto-placeholder" data-foto="${j.id}">📷</div>`}
+      <h3>${j.nombre}</h3>
+      <div class="hint">Toca la foto para cambiarla</div>
+      <label>Posición defensiva</label>
+      <select data-pos="${j.id}">${posOpts}</select>
+      <label>Orden al bate</label>
+      <select data-bat="${j.id}">${batOpts}</select>`;
+    grid.appendChild(card);
+  }
+  grid.querySelectorAll('[data-foto]').forEach(el => el.onclick = () => pedirFoto(+el.dataset.foto));
+  grid.querySelectorAll('[data-pos]').forEach(el => el.onchange = async () => {
+    await api('/api/players/' + el.dataset.pos, { method: 'PUT', body: JSON.stringify({ posicion: el.value || null }) });
+    await refrescar(); toast('Posición actualizada');
+  });
+  grid.querySelectorAll('[data-bat]').forEach(el => el.onchange = async () => {
+    await api('/api/players/' + el.dataset.bat, { method: 'PUT', body: JSON.stringify({ orden_bateo: el.value ? +el.value : null }) });
+    await refrescar(); toast('Lineup actualizado');
+  });
+}
+
+// ---------- Fotos ----------
+function pedirFoto(id) { fotoJugadorId = id; $('#file-input').click(); }
+$('#file-input').onchange = async e => {
+  const file = e.target.files[0];
+  if (!file || !fotoJugadorId) return;
+  toast('Subiendo foto…');
+  try {
+    if (fbStorage) {
+      const ref = fbStorage.ref(`bravos/jugadores/${fotoJugadorId}_${Date.now()}.jpg`);
+      await ref.put(file);
+      const url = await ref.getDownloadURL();
+      await api('/api/players/' + fotoJugadorId, { method: 'PUT', body: JSON.stringify({ foto_url: url }) });
+    } else {
+      const fd = new FormData(); fd.append('foto', file);
+      const r = await fetch(`/api/players/${fotoJugadorId}/foto`, { method: 'POST', body: fd });
+      if (!r.ok) throw new Error('Error subiendo la imagen');
+    }
+    await refrescar(); toast('Foto actualizada ✅');
+  } catch (err) { toast('⚠️ ' + err.message); }
+  e.target.value = ''; fotoJugadorId = null;
+};
+
+// ---------- Render: Campo ----------
+function renderCampo() {
+  const wrap = $('#campo-wrap');
+  wrap.querySelectorAll('.slot').forEach(s => s.remove());
+  for (const [pos, cfg] of Object.entries(POSICIONES)) {
+    const j = jugadores.find(x => x.posicion === pos);
+    const slot = document.createElement('div');
+    slot.className = 'slot';
+    slot.style.left = cfg.x + '%';
+    slot.style.top = cfg.y + '%';
+    slot.innerHTML = j
+      ? `${j.foto_url ? `<img class="mini" src="${j.foto_url}">` : `<div class="mini vacio">${iniciales(j.nombre)}</div>`}
+         <span class="etq"><span class="pos-tag">${pos}</span> ${primerNombre(j.nombre)}</span>`
+      : `<div class="mini vacio">${pos}</div><span class="etq">${cfg.nombre}</span>`;
+    slot.title = cfg.nombre + (j ? ' — ' + j.nombre : ' (vacante)');
+    slot.onclick = () => asignarPosicion(pos, cfg.nombre);
+    wrap.appendChild(slot);
+  }
+  // banca
+  const chips = $('#chips-banca');
+  chips.innerHTML = '';
+  jugadores.filter(j => !j.posicion || j.posicion === 'BE' || j.posicion === 'DH').forEach(j => {
+    const c = document.createElement('div');
+    c.className = 'chip';
+    c.innerHTML = `${j.foto_url ? `<img src="${j.foto_url}">` : `<div class="mini-ph">⚾</div>`}
+      <span>${j.nombre}${j.posicion === 'DH' ? ' · DH' : ''}${ROLES[j.rol] ? ' · ' + ROLES[j.rol] : ''}</span>`;
+    chips.appendChild(c);
+  });
+}
+const iniciales = n => n.split(' ').map(p => p[0]).slice(0, 2).join('').toUpperCase();
+const primerNombre = n => n.split(' ').slice(0, 2).join(' ');
+
+function asignarPosicion(pos, nombrePos) {
+  const actual = jugadores.find(x => x.posicion === pos);
+  const opciones = jugadores.map((j, i) => `${i + 1}. ${j.nombre}${j.posicion ? ` (${j.posicion})` : ''}`).join('\n');
+  const sel = prompt(`${nombrePos} (${pos})${actual ? `\nActual: ${actual.nombre}` : ''}\n\nEscribe el número del jugador (0 para dejar vacante):\n\n${opciones}`);
+  if (sel === null) return;
+  const n = parseInt(sel, 10);
+  if (n === 0 && actual) {
+    api('/api/players/' + actual.id, { method: 'PUT', body: JSON.stringify({ posicion: null }) })
+      .then(refrescar).then(() => toast('Posición liberada'));
+    return;
+  }
+  const j = jugadores[n - 1];
+  if (!j) return toast('Número inválido');
+  api('/api/players/' + j.id, { method: 'PUT', body: JSON.stringify({ posicion: pos }) })
+    .then(refrescar).then(() => toast(`${j.nombre} → ${pos}`));
+}
+
+// ---------- Render: Lineup ----------
+function renderLineup() {
+  const cont = $('#lineup-lista');
+  cont.innerHTML = '';
+  for (let t = 1; t <= 15; t++) {
+    const j = jugadores.find(x => x.orden_bateo === t);
+    const fila = document.createElement('div');
+    fila.className = 'turno';
+    const opts = ['<option value="">— Sin asignar —</option>']
+      .concat(jugadores.map(x =>
+        `<option value="${x.id}" ${j && j.id === x.id ? 'selected' : ''}>${x.nombre}${x.posicion ? ' · ' + x.posicion : ''}</option>`)).join('');
+    fila.innerHTML = `<div class="num">${t}</div><select data-turno="${t}">${opts}</select>`;
+    cont.appendChild(fila);
+  }
+  cont.querySelectorAll('[data-turno]').forEach(sel => sel.onchange = async () => {
+    const turno = +sel.dataset.turno;
+    const anterior = jugadores.find(x => x.orden_bateo === turno);
+    if (anterior && String(anterior.id) !== sel.value)
+      await api('/api/players/' + anterior.id, { method: 'PUT', body: JSON.stringify({ orden_bateo: null }) });
+    if (sel.value)
+      await api('/api/players/' + sel.value, { method: 'PUT', body: JSON.stringify({ orden_bateo: turno }) });
+    await refrescar(); toast('Lineup actualizado');
+  });
+}
+
+// ---------- Render: Pagos ----------
+async function renderPagos() {
+  const esAdmin = !!adminPin;
+  $('#form-abono').classList.toggle('oculto', !esAdmin);
+  $('#admin-bar').classList.toggle('oculto', esAdmin);
+
+  // resumen
+  const totalRecaudado = jugadores.reduce((s, j) => s + j.abonado, 0);
+  const meta = jugadores.length * PRECIO;
+  const completos = jugadores.filter(j => j.abonado >= PRECIO).length;
+  $('#resumen-pagos').innerHTML = `
+    <div class="stat"><div class="v">${fmt(totalRecaudado)}</div><div class="l">Recaudado</div></div>
+    <div class="stat"><div class="v">${fmt(meta - totalRecaudado)}</div><div class="l">Falta</div></div>
+    <div class="stat"><div class="v">${completos} / ${jugadores.length}</div><div class="l">Uniformes pagos</div></div>`;
+
+  // tabla
+  const tb = $('#tabla-pagos');
+  tb.innerHTML = jugadores.map(j => {
+    const pct = Math.min(100, Math.round(j.abonado / PRECIO * 100));
+    const falta = Math.max(0, PRECIO - j.abonado);
+    const estado = j.abonado >= PRECIO ? ['pagado', 'PAGADO ✓'] : j.abonado > 0 ? ['parcial', 'PARCIAL'] : ['pendiente', 'PENDIENTE'];
+    return `<tr>
+      <td>${j.nombre}</td>
+      <td>${fmt(j.abonado)}</td>
+      <td>${fmt(falta)}</td>
+      <td><div class="barra"><div style="width:${pct}%"></div></div></td>
+      <td><span class="badge ${estado[0]}">${estado[1]}</span></td>
+    </tr>`;
+  }).join('');
+
+  // select del formulario
+  $('#abono-jugador').innerHTML = jugadores.map(j =>
+    `<option value="${j.id}">${j.nombre} (${fmt(j.abonado)} / ${fmt(PRECIO)})</option>`).join('');
+
+  // historial
+  try {
+    const pagos = await api('/api/pagos');
+    $('#tabla-historial').innerHTML = pagos.length ? pagos.map(p => `<tr>
+      <td>${p.fecha.slice(0, 16)}</td><td>${p.nombre}</td><td>${fmt(p.monto)}</td><td>${p.nota || ''}</td>
+      <td>${esAdmin ? `<button class="btn peligro" data-del-pago="${p.id}" title="Eliminar abono">✕</button>` : ''}</td>
+    </tr>`).join('') : '<tr><td colspan="5" style="color:#777">Sin abonos registrados aún</td></tr>';
+    document.querySelectorAll('[data-del-pago]').forEach(b => b.onclick = async () => {
+      if (!confirm('¿Eliminar este abono?')) return;
+      await api('/api/pagos/' + b.dataset.delPago, { method: 'DELETE' });
+      await refrescar(); toast('Abono eliminado');
+    });
+  } catch (e) { /* silencioso */ }
+}
+
+$('#btn-login').onclick = async () => {
+  const pin = $('#pin-input').value.trim();
+  if (!pin) return;
+  try {
+    await api('/api/auth', { method: 'POST', body: JSON.stringify({ pin }) });
+    adminPin = pin; sessionStorage.setItem('adminPin', pin);
+    toast('Modo administrador activo 🔓');
+    await refrescar();
+  } catch (e) { toast('PIN incorrecto'); }
+};
+
+$('#btn-abonar').onclick = async () => {
+  const player_id = +$('#abono-jugador').value;
+  const monto = +$('#abono-monto').value;
+  if (!monto || monto <= 0) return toast('Ingresa un monto válido');
+  try {
+    await api('/api/pagos', { method: 'POST', body: JSON.stringify({ player_id, monto, nota: $('#abono-nota').value || null }) });
+    $('#abono-monto').value = ''; $('#abono-nota').value = '';
+    await refrescar(); toast('Abono registrado ✅');
+  } catch (e) {
+    if (String(e.message).includes('PIN')) { adminPin = null; sessionStorage.removeItem('adminPin'); await refrescar(); }
+    toast('⚠️ ' + e.message);
+  }
+};
+
+// ---------- Ciclo principal ----------
+async function refrescar() {
+  await cargarJugadores();
+  renderEquipo(); renderCampo(); renderLineup(); await renderPagos();
+}
+(async () => { await initFirebase(); await refrescar(); })();
+</script>
+</body>
+</html>

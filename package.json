@@ -1,0 +1,19 @@
+{
+  "name": "bravos-zipaquira",
+  "version": "1.0.0",
+  "description": "Gestión del equipo Bravos de Zipaquirá: roster, posiciones, lineup y pagos de uniforme",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "dependencies": {
+    "@libsql/client": "^0.17.4",
+    "better-sqlite3": "^12.11.1",
+    "dotenv": "^17.4.2",
+    "express": "^4.19.2",
+    "multer": "^1.4.5-lts.1"
+  }
+}
