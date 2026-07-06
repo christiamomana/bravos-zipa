@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+@theme {
+  /* Paleta oficial Bravos de Zipaquirá */
+  --color-negro: #121212;
+  --color-negro2: #1c1c1e;
+  --color-dorado: #d9a419;
+  --color-dorado-claro: #f0c651;
+  --color-card: #202024;
+  --color-borde: #33333a;
+  --color-verde: #3fa25c;
+  --color-rojo: #d9534f;
+  --color-gris: #b9b9bd;
+  --color-gris-claro: #e8e8ea;
+
+  /* Remapeo de amber → dorado del equipo (las páginas existentes lo heredan sin cambios) */
+  --color-amber-200: #f7df9a;
+  --color-amber-400: #f0c651;
+  --color-amber-500: #d9a419;
+  --color-amber-600: #c08f12;
+  --color-amber-700: #9c740e;
+
+  /* Remapeo de slate → negros/grises de la marca */
+  --color-slate-100: #e8e8ea;
+  --color-slate-300: #cfcfd4;
+  --color-slate-400: #b9b9bd;
+  --color-slate-500: #8f8f95;
+  --color-slate-600: #4a4a52;
+  --color-slate-700: #33333a;
+  --color-slate-800: #202024;
+  --color-slate-900: #1c1c1e;
+  --color-slate-950: #121212;
+}
+
+@theme inline {
+  --font-lobster: var(--font-lobster-next);
+  --font-anton: var(--font-anton-next);
+}
+
+@layer base {
+  * {
+    @apply m-0 p-0 box-border;
+  }
+
+  body {
+    @apply bg-negro text-gris-claro font-sans;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-card border border-borde rounded-lg p-4;
+  }
+
+  .btn {
+    @apply px-4 py-2 rounded-lg font-medium transition-colors;
+  }
+
+  .btn-primary {
+    @apply bg-dorado hover:bg-dorado-claro text-negro;
+  }
+
+  .btn-secondary {
+    @apply bg-borde hover:bg-slate-600 text-white;
+  }
+}
