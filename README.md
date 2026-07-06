@@ -1,51 +1,70 @@
-# ⚾ Bravos de Zipaquirá — App de gestión del equipo
+# Bravos de Zipaquirá ⚾
 
-Landing para gestionar el roster, posiciones defensivas, lineup de bateo y pagos de uniforme.
+Sistema de gestión del equipo Bravos de Zipaquirá - Roster, Lineup, Posiciones y Pagos de Uniforme.
 
-## Requisitos
+## Características
 
-Node.js 22.5 o superior (usa el SQLite integrado de Node, sin dependencias nativas).
+- 📋 **Sesión de Jugadores**: Cada jugador puede:
+  - Subir su propia foto
+  - Asignar su posición defensiva (P, C, 1B, 2B, 3B, SS, LF, CF, RF, DH, BE)
+  - Asignar su turno al bate (1º a 10º)
 
-## Cómo arrancar
+- ⚾ **Lineup**: Visualización en tiempo real de:
+  - Alineamiento defensivo del equipo
+  - Orden de bateo
+  - Estadísticas del equipo
 
-```bash
-cd bravos-zipaquira
+- 📊 **Dashboard**: Estadísticas principales:
+  - Total de jugadores
+  - Total abonado para uniformes
+  - Deuda total del equipo
+
+- 💾 **Base de Datos**: Almacenado en Turso (SQLite en la nube)
+
+## Tech Stack
+
+- **Frontend**: Next.js 16 + React 19
+- **Styling**: Tailwind CSS
+- **Database**: Turso (LibSQL)
+- **Deployment**: Vercel
+
+## Instalación Local
+
+\`\`\`bash
+# Instalar dependencias
 npm install
-npm start
-```
 
-Abre **http://localhost:3000** en el navegador.
+# Configurar variables de entorno
+cp .env.example .env.local
 
-## Funciones
+# Ejecutar en desarrollo
+npm run dev
+\`\`\`
 
-- **Equipo**: los 15 integrantes ya vienen cargados. Cada uno puede tocar su foto para subir una imagen, y asignar su posición defensiva y turno al bate.
-- **Campo**: diagrama del campo de béisbol con la miniatura de la foto de quien cubre cada posición. Toca una posición para asignarla. Cada posición solo puede tener un titular (se libera automáticamente la anterior).
-- **Lineup**: orden de bateo 1–15, un jugador por turno.
-- **Uniformes** ($120.000 c/u): tabla de cuánto ha abonado cada uno, cuánto falta, barra de progreso y estado (PAGADO/PARCIAL/PENDIENTE), más el historial de abonos. **Solo el administrador puede registrar o eliminar abonos.**
+## Desplegar en Vercel
 
-## PIN de administrador
+### 1. Hacer commit
 
-El PIN por defecto es `bravos2026`. Cámbialo arrancando así:
+\`\`\`bash
+git add .
+git commit -m "Implementar interfaz con Tailwind y funcionalidades"
+git push -u origin main
+\`\`\`
 
-```bash
-ADMIN_PIN=miClaveSecreta npm start
-```
+### 2. Conectar a Vercel
 
-## Datos
+1. Ve a vercel.com
+2. Conecta tu repositorio GitHub
+3. Selecciona bravos-zipa
 
-- Los datos (jugadores, posiciones, lineup, abonos) se guardan en **SQLite**: `data/bravos.db`.
-- Las fotos se guardan por defecto en la carpeta `uploads/` del servidor.
+### 3. Variables de Entorno
 
-## Fotos en Firebase (opcional)
+\`\`\`
+TURSO_CONNECTION_URL=libsql://bravos-zipa-christiamomana.aws-us-west-2.turso.io
+TURSO_AUTH_TOKEN=<tu_token>
+ADMIN_PIN=bravos2026
+\`\`\`
 
-Si prefieres que las fotos vivan en Firebase Storage:
+### 4. Deploy
 
-1. Crea un proyecto en https://console.firebase.google.com
-2. Activa **Storage** y ajusta las reglas de lectura/escritura
-3. Copia la configuración web del proyecto en `public/firebase-config.js` (hay instrucciones dentro del archivo)
-
-Con eso, las fotos se suben a Firebase automáticamente y solo la URL se guarda en SQLite. Si no configuras nada, todo sigue funcionando con almacenamiento local.
-
-## Para que todo el equipo la use desde el celular
-
-La app corre en tu computador; para compartirla con el equipo necesitas exponerla en internet. Opciones fáciles y gratuitas: [Railway](https://railway.app), [Render](https://render.com) o [Fly.io](https://fly.io) (sube esta carpeta como proyecto Node). También puedes probar rápido con `npx localtunnel --port 3000`.
+¡Vercel lo hará automáticamente!
